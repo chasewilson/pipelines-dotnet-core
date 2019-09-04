@@ -11,6 +11,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
+  NUGET_PACKAGES: $(Pipeline.Workspace)/.nuget/packages
 
 steps:
 - task: DotNetCoreCLI@2
@@ -19,6 +20,12 @@ steps:
     command: build
     projects: '**/*.csproj'
     arguments: '--configuration Release' # Update this to match your need
+
+- task: CacheBeta@0
+  inputs:
+    key: nuget | packages.lock.json
+    path: $(NUGET_PACKAGES)
+  displayName: Cache NuGet packages
 
 - task: PublishBuildArtifacts@1
   inputs:
